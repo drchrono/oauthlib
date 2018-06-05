@@ -31,8 +31,9 @@ class GrantTypeBase(object):
             raise errors.UnauthorizedClientError(request=request)
 
     def validate_scopes(self, request):
+        request.scopes = getattr(request, 'scopes', getattr(request, 'scope', None))
         if not request.scopes:
-            request.scopes = utils.scope_to_list(request.scope) or utils.scope_to_list(
+            request.scopes = utils.scope_to_list(request.scopes) or utils.scope_to_list(
                 self.request_validator.get_default_scopes(request.client_id, request))
         log.debug('Validating access to scopes %r for client %r (%r).',
                   request.scopes, request.client_id, request.client)
